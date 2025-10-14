@@ -85,7 +85,7 @@ def build_rxnorm_lookups(rxnorm_path):
         name_to_rxcui: dict mapping normalized names to (rxcui, type)
         rxcui_to_names: dict mapping rxcui to set of all its names
     """
-    print("📂 Loading RxNorm mappings...")
+    print("Loading RxNorm mappings...")
     rxnorm_df = pd.read_csv(rxnorm_path)
 
     print(f"   Shape: {rxnorm_df.shape}")
@@ -109,7 +109,7 @@ def build_rxnorm_lookups(rxnorm_path):
         else:
             name_to_rxcui[name_norm] = (rxcui, drug_type)
 
-    print(f"✅ Built lookup dicts:")
+    print(f"Built lookup dictionaries:")
     print(f"   Unique names: {len(name_to_rxcui):,}")
     print(f"   Unique RxCUIs: {len(rxcui_to_names):,}")
 
@@ -132,10 +132,10 @@ def build_brand_to_ingredient_cache(rxnorm_df, cache_path):
     if cache_path.exists():
         with open(cache_path, "rb") as f:
             bn_to_in_map = pickle.load(f)
-        print(f"✅ Loaded existing cache: {len(bn_to_in_map):,} entries")
+        print(f"Loaded existing cache: {len(bn_to_in_map):,} entries")
         return bn_to_in_map
 
-    print("⏳ Building brand→ingredient cache via API (this will take 3-4 days)...")
+    print("Building brand→ingredient cache via API (this will take 3-4 days)...")
 
     non_in_df = rxnorm_df[rxnorm_df['type'] != "IN"]
     unique_non_in = non_in_df[['rxcui', 'name_norm']].drop_duplicates(subset='rxcui')
@@ -165,7 +165,7 @@ def build_brand_to_ingredient_cache(rxnorm_df, cache_path):
         time.sleep(0.2)
 
     atomic_save(bn_to_in_map, cache_path)
-    print(f"✅ Final: {len(bn_to_in_map):,}/{total:,} entries ({100 * len(bn_to_in_map) / total:.1f}% coverage)")
+    print(f"Final: {len(bn_to_in_map):,}/{total:,} entries ({100 * len(bn_to_in_map) / total:.1f}% coverage)")
 
     return bn_to_in_map
 
@@ -188,15 +188,15 @@ def build_ingredient_index(bn_to_in_map, api_cache_path):
         if norm_name not in ingredient_name_to_rxcui:
             ingredient_name_to_rxcui[norm_name] = ing_rxcui
 
-    print(f"✅ Reverse index: {len(ingredient_name_to_rxcui):,} unique ingredient names")
+    print(f"Reverse index: {len(ingredient_name_to_rxcui):,} unique ingredient names")
 
     # Merge previous API discoveries
     if api_cache_path.exists():
         with open(api_cache_path, "rb") as f:
             api_discoveries = pickle.load(f)
         ingredient_name_to_rxcui.update(api_discoveries)
-        print(f"✅ Merged {len(api_discoveries):,} previous API discoveries")
-        print(f"📊 Total ingredient cache: {len(ingredient_name_to_rxcui):,}")
+        print(f"Merged {len(api_discoveries):,} previous API discoveries")
+        print(f"Total ingredient cache: {len(ingredient_name_to_rxcui):,}")
 
     # Add common aliases
     ingredient_name_to_rxcui['paracetamol'] = '161'
@@ -269,7 +269,7 @@ def map_drugbank_to_rxcui(interactions_path, name_to_rxcui, bn_to_in_map, ingred
         interactions_df: DataFrame with added drug1_rxcui and drug2_rxcui columns
         newly_resolved: dict of new API discoveries
     """
-    print("📊 Loading DrugBank interactions...")
+    print("Loading DrugBank interactions...")
     interactions_df = pd.read_csv(interactions_path)
     print(f"   Shape: {interactions_df.shape}")
 
@@ -315,7 +315,7 @@ def map_drugbank_to_rxcui(interactions_path, name_to_rxcui, bn_to_in_map, ingred
                             newly_resolved[norm_ing_name] = ing_rxcui
 
                             if len(newly_resolved) % 50 == 0:
-                                print(f"   🧩 Cached {len(newly_resolved):,} new ingredients...")
+                                print(f"   Cached {len(newly_resolved):,} new ingredients...")
 
                             return ing_rxcui
 
@@ -342,7 +342,7 @@ def map_drugbank_to_rxcui(interactions_path, name_to_rxcui, bn_to_in_map, ingred
     with open(api_cache_path, "wb") as f:
         pickle.dump(newly_resolved, f)
 
-    print(f"✅ Saved {len(newly_resolved):,} total API discoveries")
+    print(f"Saved {len(newly_resolved):,} total API discoveries")
 
     return interactions_df, newly_resolved
 
@@ -373,7 +373,7 @@ def build_knowledge_base(interactions_df):
     # Remove duplicates
     kb_df = kb_df.drop_duplicates(subset='pair_key')
 
-    print(f"✅ Clean Knowledge Base:")
+    print(f"Clean Knowledge Base:")
     print(f"   Total interactions: {len(kb_df):,}")
     print(f"   Unique drug pairs: {kb_df['pair_key'].nunique():,}")
 
@@ -392,20 +392,20 @@ def display_statistics(interactions_df, kb_df, bn_to_in_map):
     unmapped_drug2 = interactions_df['drug2_rxcui'].isnull().sum()
     total = len(interactions_df)
 
-    print(f"\n📊 Mapping Results:")
+    print(f"\nMapping Results:")
     print(f"   Drug 1 mapped: {total - unmapped_drug1:,} / {total:,} ({100 * (1 - unmapped_drug1 / total):.1f}%)")
     print(f"   Drug 2 mapped: {total - unmapped_drug2:,} / {total:,} ({100 * (1 - unmapped_drug2 / total):.1f}%)")
-    print(f"   ✅ Pair-level mapped: {len(kb_df):,} / {total:,} ({100 * len(kb_df) / total:.1f}%)")
+    print(f"   Pair-level mapped: {len(kb_df):,} / {total:,} ({100 * len(kb_df) / total:.1f}%)")
 
     # Synonym unification validation
     collapse_check = Counter(bn_to_in_map.values())
-    print("\n🔝 Top 10 ingredients by brand/synonym count:")
+    print("\nTop 10 ingredients by brand/synonym count:")
     for (ing_rxcui, ing_name), count in collapse_check.most_common(10):
-        print(f"   {ing_name:40} ({ing_rxcui}) ⇢ {count} variants")
+        print(f"   {ing_name:40} ({ing_rxcui}) → {count} variants")
 
     # Acetaminophen unification
     brands_to_161 = [bn for bn, (ing, _) in bn_to_in_map.items() if ing == '161']
-    print(f"\n✅ Acetaminophen (RxCUI 161): {len(brands_to_161)} brand variants unified")
+    print(f"\nAcetaminophen (RxCUI 161): {len(brands_to_161)} brand variants unified")
 
 
 # ============================================================================
@@ -418,7 +418,7 @@ def save_outputs(kb_df, name_to_rxcui, rxcui_to_names, bn_to_in_map, ingredient_
     # Save knowledge base
     kb_path = DATA_DIR / 'processed_interactions_kb.csv'
     kb_df.to_csv(kb_path, index=False)
-    print(f"✅ Saved: {kb_path}")
+    print(f"Saved: {kb_path}")
 
     # Save all lookup dictionaries
     lookups_path = DATA_DIR / 'rxnorm_lookups.pkl'
@@ -429,10 +429,10 @@ def save_outputs(kb_df, name_to_rxcui, rxcui_to_names, bn_to_in_map, ingredient_
             'bn_to_in_map': dict(bn_to_in_map),
             'ingredient_name_to_rxcui': dict(ingredient_name_to_rxcui)
         }, f)
-    print(f"✅ Saved: {lookups_path}")
+    print(f"Saved: {lookups_path}")
 
-    print("\n🎯 Data ingestion complete!")
-    print(f"📊 Final stats:")
+    print("\nData ingestion complete!")
+    print(f"Final statistics:")
     print(f"   Knowledge base: {len(kb_df):,} interactions")
     print(f"   Name→RxCUI mappings: {len(name_to_rxcui):,}")
     print(f"   Brand→Ingredient cache: {len(bn_to_in_map):,}")
