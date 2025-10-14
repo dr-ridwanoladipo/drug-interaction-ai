@@ -8,3 +8,5 @@ langchain==0.3.27
 fastapi==0.118.0
 uvicorn[standard]==0.37.0
 streamlit==1.50.0
+openai==1.109.1
+boto3==1.40.50
