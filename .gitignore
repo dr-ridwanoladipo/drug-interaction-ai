@@ -1,3 +1,6 @@
 venv
 .idea
+.env
 /data/
+utility/
+notebooks/.ipynb_checkpoints
