@@ -403,6 +403,73 @@ def check_polypharmacy(drugs, kb_df, lookups, index, embeddings, client):
 
 
 # ============================================================================
+# Step 7B: Direct-Lookup-Only Polypharmacy (Tier 1 / Tier 3)
+# ============================================================================
+
+def check_polypharmacy_light(drug_input, kb_df, lookups):
+    """
+    Lightweight polypharmacy checker (DIRECT LOOKUP ONLY).
+    Returns Tier 1 (found) or Tier 3 (not found) — never Tier 2.
+    Ideal for quick or offline inference where FAISS/LLM isn't needed.
+    """
+    from itertools import combinations
+
+    # Parse drug input
+    if isinstance(drug_input, str):
+        text = drug_input.replace("interaction", "").strip()
+        if " and " in text:
+            parts = text.split(" and ")
+            first_part = parts[0]
+            last_drug = parts[1].strip()
+            drugs = [d.strip() for d in first_part.split(",") if d.strip()] + [last_drug]
+        else:
+            drugs = [d.strip() for d in text.split(",") if d.strip()]
+    else:
+        drugs = drug_input
+
+    if len(drugs) < 2:
+        return {'error': 'Need at least 2 drugs', 'drugs': [], 'num_pairs': 0, 'results': []}
+
+    pairs = list(combinations(drugs, 2))
+    all_results = []
+
+    for drug1, drug2 in pairs:
+        query_text = f"{drug1} and {drug2} interaction"
+
+        rxcui1 = normalize_to_rxcui(drug1, lookups)
+        rxcui2 = normalize_to_rxcui(drug2, lookups)
+
+        if not rxcui1 or not rxcui2:
+            all_results.append({
+                "query": query_text,
+                "hits": [],
+                "tier": 3,
+                "message": "Could not normalize drug names"
+            })
+            continue
+
+        pair_key = tuple(sorted([rxcui1, rxcui2]))
+        match = kb_df[kb_df['pair_key'] == pair_key]
+
+        if not match.empty:
+            hits = [{
+                'drug1': match['Drug 1'].values[0],
+                'drug2': match['Drug 2'].values[0],
+                'evidence': match['Interaction Description'].values[0],
+                'retrieval_score': 1.0
+            }]
+            all_results.append({"query": query_text, "hits": hits, "tier": 1})
+        else:
+            all_results.append({
+                "query": query_text,
+                "hits": [],
+                "tier": 3,
+                "message": f"No documented interaction for {drug1} + {drug2}"
+            })
+
+    return {'drugs': drugs, 'num_pairs': len(pairs), 'results': all_results}
+
+# ============================================================================
 # Main Pipeline Class
 # ============================================================================
 
