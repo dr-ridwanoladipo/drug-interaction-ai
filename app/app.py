@@ -6,7 +6,10 @@ Author: Ridwan Oladipo, MD | Medical AI Specialist
 """
 
 import streamlit as st
-from drug_ui_helpers import load_custom_css, initialize_session_state
+from drug_ui_helpers import (
+    load_custom_css, initialize_session_state,
+    load_precomputed_results, display_hero_section
+)
 
 
 # ============================================================================
@@ -23,10 +26,16 @@ load_custom_css()
 
 
 # ============================================================================
+# LOAD PRECOMPUTED RESULTS
+# ============================================================================
+load_precomputed_results()
+
+
+# ============================================================================
 # MAIN APP
 # ============================================================================
 def main():
-    st.title("AI Drug Interaction Checker")
+    display_hero_section()
     st.write("This application provides intelligent analysis of potential "
              "drug–drug interactions and therapeutic guidance for clinicians.")
 

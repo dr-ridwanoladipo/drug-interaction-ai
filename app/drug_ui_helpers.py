@@ -205,6 +205,46 @@ def load_custom_css():
     """, unsafe_allow_html=True)
 
 
+# ============================================================================
+#  DATA LOADING
+# ============================================================================
+
+def load_precomputed_results():
+    """Load precomputed analysis results from JSON"""
+    results_path = Path("data/precomputed_samples.json")
+
+    if not results_path.exists():
+        st.error("⚠️ Precomputed results file not found")
+        return None
+
+    try:
+        with open(results_path, 'r') as f:
+            data = json.load(f)
+
+        # Index results by scenario number
+        results_dict = {i: item['analysis'] for i, item in enumerate(data)}
+        return results_dict
+
+    except Exception as e:
+        st.error(f"Error loading results: {e}")
+        return None
+
+
+# ============================================================================
+#  DISPLAY COMPONENTS
+# ============================================================================
+
+def display_hero_section():
+    """Display hero header"""
+    st.markdown("""
+    <div class="hero-header">
+        <h1>💊 Drug Interaction Checker</h1>
+        <p>AI-Powered Clinical Decision Support</p>
+        <p><strong>by Ridwan Oladipo, MD | Medical AI Specialist</strong></p>
+    </div>
+    """, unsafe_allow_html=True)
+
+
 def initialize_session_state():
     """Initialize session state variables"""
     if 'selected_scenario' not in st.session_state:
