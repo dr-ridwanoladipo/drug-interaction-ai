@@ -421,6 +421,31 @@ def display_pair_analysis(pair_analyses):
         st.markdown('</div>', unsafe_allow_html=True)
 
 
+def display_footer():
+    """Display footer"""
+    html = """
+<div class="medical-footer">
+  <p style="font-size:0.95rem; opacity:0.9; margin-bottom:0.8rem;">
+    Powered by DrugBank · RxNorm · OpenAI GPT-5 · AWS Bedrock
+  </p>
+  <div style="margin-top:0.3rem;">
+    <a href="https://github.com/dr-ridwanoladipo/drug-interaction-ai" target="_blank"
+       style="color:#a5b4fc; text-decoration:none; margin-right:1.2rem; font-weight:500;">💻 GitHub</a>
+    <a href="https://huggingface.co/spaces/dr-ridwanoladipo/drug-interaction-ai" target="_blank"
+       style="color:#a5b4fc; text-decoration:none; font-weight:500;">⚡ API Documentation</a>
+  </div>
+  <p style="margin-top:1rem; font-size:0.95rem; color:rgba(255,255,255,0.85);">
+    © 2025 Ridwan Oladipo, MD — Medical AI Specialist
+  </p>
+  <p style="margin-top:0.5rem; font-size:0.8rem; opacity:0.8;">
+    ⚠️ Built to FDA-grade standards for clinical deployment.  
+    All medical decisions should be made in consultation with qualified healthcare providers.
+  </p>
+</div>
+"""
+    st.markdown(html, unsafe_allow_html=True)
+
+
 def render_sidebar():
     """Render sidebar with system information"""
     with st.sidebar:

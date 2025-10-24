@@ -12,7 +12,7 @@ from drug_ui_helpers import (
     render_sidebar, display_scenario_grid,
     display_user_message, stream_text,
     display_ai_response, display_pair_analysis,
-    reset_chat
+    reset_chat, display_footer
 )
 
 
@@ -112,6 +112,12 @@ def main():
                 if st.button("← Back to Scenarios", use_container_width=True):
                     reset_chat()
                     st.rerun()
+
+    # ============================================================================
+    # FOOTER
+    # ============================================================================
+    st.markdown("---")
+    display_footer()
 
 
 if __name__ == "__main__":
