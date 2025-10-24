@@ -245,6 +245,47 @@ def display_hero_section():
     """, unsafe_allow_html=True)
 
 
+def render_sidebar():
+    """Render sidebar with system information"""
+    with st.sidebar:
+        st.markdown("### ⚙️ System Overview")
+        st.markdown("""
+        **Production-Grade RAG Clinical Intelligence**
+
+        - 170K+ curated DrugBank pairs  
+        - RxNorm-standardized mapping (77K brand→ingredient)  
+        - GPT-5 clinical reasoning + rule logic  
+        - 3-Tier safety confidence (Direct ▸ Semantic ▸ None)
+        """)
+        st.markdown(
+            "<p style='font-size:0.85rem; color:rgba(255,255,255,0.8); font-style:italic; "
+            "margin-top:-0.5rem;'>Tier 1: Direct KB match | Tier 2: Semantic similarity | "
+            "Tier 3: No evidence</p>",
+            unsafe_allow_html=True,
+        )
+
+        st.markdown("---")
+
+        st.markdown("### 🧠 AI Stack")
+        st.markdown("""
+        - **LLM:** OpenAI **GPT-5**  
+        - **Embeddings:** OpenAI *text-embedding-3-large (3072-dim)*  
+          + AWS **Bedrock Titan V2 (512-dim)** benchmark  
+        - **Retrieval:** FAISS similarity search  
+        - **Pipeline:** Polypharmacy RAG + severity classifier
+        """)
+
+        st.markdown("---")
+
+        st.markdown("### 💡 Key Features")
+        st.markdown("""
+        - Dual-embedding benchmarking (OpenAI vs AWS)  
+        - Clinical-grade safety synthesis (🟥 / 🟨 / 🟩)  
+        - Confidence-weighted reasoning  
+        - Hospital-ready CDSS integration
+        """)
+
+
 def initialize_session_state():
     """Initialize session state variables"""
     if 'selected_scenario' not in st.session_state:
