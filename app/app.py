@@ -70,16 +70,62 @@ def main():
         st.error("Failed to load analysis results")
         return
 
-    # Render sidebar
     render_sidebar()
 
     # Display hero section
     display_hero_section()
 
-    # Display clinical scenario grid
-    display_scenario_grid(SCENARIOS)
+    # ========================================================================
+    # CHAT INTERFACE
+    # ========================================================================
 
-    # Footer
+    if st.session_state.selected_scenario is None:
+        # Display scenario selection grid
+        display_scenario_grid(SCENARIOS)
+
+    else:
+        # Get selected scenario
+        idx = st.session_state.selected_scenario
+        title, query = SCENARIOS[idx]
+
+        # Chat container
+        st.markdown('<div class="chat-container">', unsafe_allow_html=True)
+
+        # Display user message
+        if st.session_state.show_user_message:
+            display_user_message(title, query)
+
+        # Display check button
+        if st.session_state.show_check_button and not st.session_state.show_ai_response:
+            col1, col2, col3 = st.columns([1, 2, 1])
+            with col2:
+                if st.button("🔍 Check Interaction", key="check_btn", use_container_width=True):
+                    st.session_state.show_ai_response = True
+                    st.rerun()
+
+        # Display AI response
+        if st.session_state.show_ai_response:
+            analysis = results.get(idx)
+
+            if analysis:
+                st.markdown("---")
+                display_ai_response(analysis, stream=True)
+            else:
+                st.error(f"Analysis not found for: {title}")
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        # Back button
+        st.markdown("---")
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col2:
+            if st.button("← Back to Scenarios", use_container_width=True):
+                if "check_btn" in st.session_state:
+                    del st.session_state["check_btn"]
+                reset_chat()
+                st.rerun()
+
+    # Display footer
     st.markdown("---")
     display_footer()
 
