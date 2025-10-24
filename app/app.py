@@ -10,7 +10,8 @@ from drug_ui_helpers import (
     load_custom_css, initialize_session_state,
     load_precomputed_results, display_hero_section,
     render_sidebar, display_scenario_grid,
-    display_user_message
+    display_user_message, stream_text,
+    display_ai_response, display_pair_analysis
 )
 
 
@@ -25,7 +26,10 @@ st.set_page_config(
 
 initialize_session_state()
 load_custom_css()
-load_precomputed_results()
+
+# Load precomputed results and store in session
+results = load_precomputed_results()
+st.session_state.precomputed_results = results
 
 
 # ============================================================================
@@ -74,11 +78,25 @@ def main():
     # Display scenario selection grid
     display_scenario_grid(SCENARIOS)
 
-    # Display user message for selected scenario
+    # Handle user selection
     if st.session_state.selected_scenario is not None:
         idx = st.session_state.selected_scenario
         title, query = SCENARIOS[idx]
+
+        # Display user message
         display_user_message(title, query)
+
+        # Fetch and display AI response
+        st.markdown("---")
+        st.info("AI Clinical Reasoning in progress...")
+
+        analysis = st.session_state.precomputed_results.get(idx)
+
+        if analysis:
+            display_ai_response(analysis, stream=True)
+            display_pair_analysis(analysis['pair_analyses'])
+        else:
+            st.error(f"Analysis not found for: {title}")
 
 
 if __name__ == "__main__":

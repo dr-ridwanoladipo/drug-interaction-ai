@@ -291,6 +291,136 @@ def display_user_message(title, query):
     """, unsafe_allow_html=True)
 
 
+def stream_text(text, delay=0.02):
+    """Stream text character by character"""
+    placeholder = st.empty()
+    displayed_text = ""
+
+    for char in text:
+        displayed_text += char
+        placeholder.markdown(displayed_text)
+        time.sleep(delay)
+
+
+def display_ai_response(analysis, stream=True):
+    """Display AI response with streaming"""
+
+    st.markdown('<div class="ai-message">', unsafe_allow_html=True)
+
+    # Show analysis indicator
+    if stream and "check_btn" in st.session_state:
+        with st.spinner("💊 Analyzing interactions..."):
+            time.sleep(3.5)
+
+    # Overall Risk Badge
+    overall = analysis['overall_assessment']
+    flag = overall['overall_flag']
+    risk_level = overall['risk_level']
+
+    if flag == '🟥':
+        badge_class = 'risk-high'
+    elif flag == '🟨':
+        badge_class = 'risk-moderate'
+    else:
+        badge_class = 'risk-low'
+
+    st.markdown(
+        f'<div class="risk-badge {badge_class}">{flag} {risk_level}</div>',
+        unsafe_allow_html=True
+    )
+
+    # Clinical Assessment
+    st.markdown('<div class="clinical-section">', unsafe_allow_html=True)
+    st.markdown('<div class="section-label">📋 CLINICAL ASSESSMENT</div>', unsafe_allow_html=True)
+
+    if stream and "check_btn" in st.session_state:
+        stream_text(overall['clinical_synthesis'], delay=0.01)
+    else:
+        st.markdown(f'<div class="section-content">{overall["clinical_synthesis"]}</div>', unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # Cumulative Concerns
+    if overall.get('cumulative_concerns'):
+        st.markdown(
+            f'<div class="alert-box">'
+            f'<span style="font-size: 1.2rem; margin-right: 0.5rem;">⚠️</span>'
+            f'<strong>Cumulative Concerns:</strong> ',
+            unsafe_allow_html=True
+        )
+        if stream and "check_btn" in st.session_state:
+            stream_text(overall['cumulative_concerns'], delay=0.02)
+        else:
+            st.markdown(overall['cumulative_concerns'])
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Action Required
+    if overall.get('action_required'):
+        st.markdown(
+            f'<div class="alert-box" style="border-left-color: #dc2626;">'
+            f'<span style="font-size: 1.2rem; margin-right: 0.5rem;">🚨</span>'
+            f'<strong>Action Required:</strong> ',
+            unsafe_allow_html=True
+        )
+        if stream and "check_btn" in st.session_state:
+            stream_text(overall['action_required'], delay=0.02)
+        else:
+            st.markdown(overall['action_required'])
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Expandable Details
+    with st.expander("📋 See Detailed Pair-by-Pair Analysis"):
+        display_pair_analysis(analysis['pair_analyses'])
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+def display_pair_analysis(pair_analyses):
+    """Display pair-by-pair breakdown"""
+    st.markdown(f"**Analyzed {len(pair_analyses)} drug pair(s)**")
+
+    for pair in pair_analyses:
+        flag = pair['flag']
+
+        if flag == '🟥':
+            border_class = 'red-border'
+        elif flag == '🟨':
+            border_class = 'yellow-border'
+        else:
+            border_class = 'green-border'
+
+        st.markdown(f'<div class="pair-card {border_class}">', unsafe_allow_html=True)
+
+        st.markdown(
+            f'<div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem;">'
+            f'<span style="font-size: 1.5rem;">{flag}</span>'
+            f'<span style="font-weight: 600; font-size: 1.1rem;">{pair["query"]}</span>'
+            f'</div>',
+            unsafe_allow_html=True
+        )
+
+        st.markdown(
+            f'<div style="font-size: 0.85rem; color: #6b7280; margin-bottom: 0.5rem;">'
+            f'Tier {pair["tier"]} | Confidence: {pair["confidence"] * 100:.0f}%</div>',
+            unsafe_allow_html=True
+        )
+
+        st.markdown(
+            f'<div style="font-size: 1rem; line-height: 1.6; color: #374151;">{pair["reasoning"]}</div>',
+            unsafe_allow_html=True
+        )
+
+        if pair.get('monitoring'):
+            st.markdown(
+                f'<div style="margin-top: 0.5rem; padding: 0.5rem; background: #f9fafb; '
+                f'border-radius: 6px; font-size: 0.9rem;">'
+                f'<strong>Monitor:</strong> {pair["monitoring"]}</div>',
+                unsafe_allow_html=True
+            )
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+
 def render_sidebar():
     """Render sidebar with system information"""
     with st.sidebar:
