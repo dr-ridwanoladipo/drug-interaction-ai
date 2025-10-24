@@ -30,6 +30,11 @@ load_custom_css()
 
 # Load precomputed results and store in session
 results = load_precomputed_results()
+
+if results is None or len(results) == 0:
+    st.error("🚨 Failed to load drug interaction data. Please verify data source.")
+    st.stop()
+
 st.session_state.precomputed_results = results
 
 
@@ -97,13 +102,17 @@ def main():
 
         # Display AI response and pair analysis
         if st.session_state.get("show_ai_response", False):
+            if "precomputed_results" not in st.session_state:
+                st.error("❌ No precomputed data found. Please reload the app.")
+                return
+
             analysis = st.session_state.precomputed_results.get(idx)
             if analysis:
                 st.markdown("---")
                 display_ai_response(analysis, stream=True)
-                display_pair_analysis(analysis['pair_analyses'])
+                display_pair_analysis(analysis.get('pair_analyses', []))
             else:
-                st.error(f"Analysis not found for: {title}")
+                st.warning(f"⚠️ No analysis data found for: **{title}**")
 
             # Back button
             st.markdown("---")
