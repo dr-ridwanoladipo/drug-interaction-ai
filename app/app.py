@@ -11,7 +11,8 @@ from drug_ui_helpers import (
     load_precomputed_results, display_hero_section,
     render_sidebar, display_scenario_grid,
     display_user_message, stream_text,
-    display_ai_response, display_pair_analysis
+    display_ai_response, display_pair_analysis,
+    reset_chat
 )
 
 
@@ -86,17 +87,31 @@ def main():
         # Display user message
         display_user_message(title, query)
 
-        # Fetch and display AI response
+        # Interaction button
         st.markdown("---")
-        st.info("AI Clinical Reasoning in progress...")
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button("🔍 Check Interaction", use_container_width=True):
+                st.session_state.show_ai_response = True
+                st.rerun()
 
-        analysis = st.session_state.precomputed_results.get(idx)
+        # Display AI response and pair analysis
+        if st.session_state.get("show_ai_response", False):
+            analysis = st.session_state.precomputed_results.get(idx)
+            if analysis:
+                st.markdown("---")
+                display_ai_response(analysis, stream=True)
+                display_pair_analysis(analysis['pair_analyses'])
+            else:
+                st.error(f"Analysis not found for: {title}")
 
-        if analysis:
-            display_ai_response(analysis, stream=True)
-            display_pair_analysis(analysis['pair_analyses'])
-        else:
-            st.error(f"Analysis not found for: {title}")
+            # Back button
+            st.markdown("---")
+            col1, col2, col3 = st.columns([1, 1, 1])
+            with col2:
+                if st.button("← Back to Scenarios", use_container_width=True):
+                    reset_chat()
+                    st.rerun()
 
 
 if __name__ == "__main__":

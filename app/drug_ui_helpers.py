@@ -472,3 +472,11 @@ def initialize_session_state():
         st.session_state.show_check_button = False
     if 'show_ai_response' not in st.session_state:
         st.session_state.show_ai_response = False
+
+
+def reset_chat():
+    """Reset chat state"""
+    st.session_state.selected_scenario = None
+    st.session_state.show_user_message = False
+    st.session_state.show_check_button = False
+    st.session_state.show_ai_response = False
