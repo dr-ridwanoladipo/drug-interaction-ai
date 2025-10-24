@@ -9,7 +9,8 @@ import streamlit as st
 from drug_ui_helpers import (
     load_custom_css, initialize_session_state,
     load_precomputed_results, display_hero_section,
-    render_sidebar, display_scenario_grid
+    render_sidebar, display_scenario_grid,
+    display_user_message
 )
 
 
@@ -72,6 +73,12 @@ def main():
 
     # Display scenario selection grid
     display_scenario_grid(SCENARIOS)
+
+    # Display user message for selected scenario
+    if st.session_state.selected_scenario is not None:
+        idx = st.session_state.selected_scenario
+        title, query = SCENARIOS[idx]
+        display_user_message(title, query)
 
 
 if __name__ == "__main__":

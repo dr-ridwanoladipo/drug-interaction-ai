@@ -281,6 +281,16 @@ def display_scenario_grid(scenarios):
             )
 
 
+def display_user_message(title, query):
+    """Display user message bubble"""
+    st.markdown(f"""
+    <div class="user-message">
+        <div class="user-message-title">{title}</div>
+        <div class="user-message-text">"{query}"</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
 def render_sidebar():
     """Render sidebar with system information"""
     with st.sidebar:
