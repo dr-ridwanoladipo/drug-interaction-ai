@@ -245,6 +245,42 @@ def display_hero_section():
     """, unsafe_allow_html=True)
 
 
+def display_scenario_grid(scenarios):
+    """Display clinical scenario selection grid"""
+    st.markdown("### 🔍 Select a Clinical Scenario")
+    st.markdown(
+        "<p style='margin-top:-0.4rem; font-size:0.9rem; color:#4b5563;'>💬 <em>Demo subset — production version supports real-time polypharmacy analysis for any drug combination.</em></p>",
+        unsafe_allow_html=True)
+    st.markdown("<p style='margin-top:0.4rem;'>Click any scenario below to analyze drug interactions</p>",
+                unsafe_allow_html=True)
+    st.markdown("---")
+
+    cols = st.columns(2)
+
+    for idx, (title, query) in enumerate(scenarios):
+        with cols[idx % 2]:
+            if st.button(
+                    f"📋 {title}",
+                    key=f"scenario_{idx}",
+                    use_container_width=True,
+                    help=query
+            ):
+                st.session_state.selected_scenario = idx
+                st.session_state.show_user_message = True
+                st.session_state.show_check_button = True
+                st.session_state.show_ai_response = False
+                st.rerun()
+
+            st.markdown(
+                f'<div style="font-size: 0.9rem; color: #374151; text-align: center; '
+                f'padding: 0.4rem 0.6rem; background: #f9fafb; border-radius: 8px; '
+                f'margin-top: 0.1rem; margin-bottom: 2.4rem; '
+                f'box-shadow: 0 1px 4px rgba(0,0,0,0.05); word-wrap: break-word;">'
+                f'"{query}"</div>',
+                unsafe_allow_html=True
+            )
+
+
 def render_sidebar():
     """Render sidebar with system information"""
     with st.sidebar:
