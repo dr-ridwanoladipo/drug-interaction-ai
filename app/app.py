@@ -105,7 +105,8 @@ def main():
 
         # Display AI response
         if st.session_state.show_ai_response:
-            analysis = results.get(idx)
+            title, _ = SCENARIOS[idx]
+            analysis = results.get(title)
 
             if analysis:
                 st.markdown("---")

@@ -222,7 +222,7 @@ def load_precomputed_results():
             data = json.load(f)
 
         # Index results by scenario number
-        results_dict = {i: item['analysis'] for i, item in enumerate(data)}
+        results_dict = {item['scenario']: item['analysis'] for item in data}
         return results_dict
 
     except Exception as e:
