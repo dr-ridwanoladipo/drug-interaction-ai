@@ -62,3 +62,77 @@ async def add_process_time_header(request: Request, call_next):
     process_time = (time.time() - start) * 1000
     logger.info(f"{request.method} {request.url.path} in {process_time:.2f} ms")
     return response
+
+
+# ============================================================================
+# Pydantic Models
+# ============================================================================
+
+class ScenarioInfo(BaseModel):
+    id: int
+    title: str
+
+
+class ScenarioList(BaseModel):
+    scenarios: List[ScenarioInfo]
+    total: int
+
+
+class CheckInteractionRequest(BaseModel):
+    scenario_id: int
+
+
+class LiveInteractionRequest(BaseModel):
+    drug_query: str = Field(
+        ...,
+        description=(
+            "STRICT FORMAT REQUIRED:\n"
+            "• 2 drugs: 'Drug1 and Drug2' (example: 'Warfarin and Aspirin')\n"
+            "• 3+ drugs: 'Drug1, Drug2 and Drug3' (example: 'Warfarin, Aspirin and Ibuprofen')\n"
+            "DO NOT mix formats (e.g., 'Drug1 and Drug2, Drug3' is INVALID)"
+        ),
+        example="Warfarin and Aspirin",
+        min_length=5,
+        max_length=200
+    )
+
+    @validator('drug_query')
+    def validate_query_format(cls, v):
+        """Validate drug query format to prevent common errors."""
+        v = v.strip()
+        and_count = v.lower().count(' and ')
+        comma_count = v.count(',')
+
+        if and_count == 0 and comma_count == 0:
+            raise ValueError(
+                "INVALID: Must contain 'and'. Valid formats: 'Drug1 and Drug2' OR 'Drug1, Drug2 and Drug3'"
+            )
+
+        if comma_count > 0 and and_count == 0:
+            raise ValueError(
+                "INVALID: When using commas, must end with 'and DrugN'. Example: 'Warfarin, Aspirin and Ibuprofen'"
+            )
+
+        if comma_count > 0 and and_count > 0:
+            and_pos = v.lower().find(' and ')
+            comma_pos = v.find(',')
+            if comma_pos > and_pos:
+                raise ValueError(
+                    "INVALID: Cannot mix formats like 'Drug1 and Drug2, Drug3'. Use 'Drug1 and Drug2' OR 'Drug1, Drug2 and Drug3'"
+                )
+
+        if and_count > 1:
+            raise ValueError(
+                "INVALID: Multiple 'and' keywords detected. Use 'Drug1 and Drug2' OR 'Drug1, Drug2 and Drug3' (only ONE 'and' at the end)"
+            )
+
+        return v
+
+
+class HealthResponse(BaseModel):
+    status: str
+    scenarios_loaded: int
+    live_lookup_enabled: bool
+    version: str
+    startup_time: str
+    timestamp: str
