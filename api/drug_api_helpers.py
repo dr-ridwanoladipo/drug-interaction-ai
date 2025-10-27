@@ -49,3 +49,26 @@ class DrugDataService:
         except Exception as e:
             logger.error(f"Failed to load data: {str(e)}")
             return False
+
+    def get_all_scenarios(self) -> List[Dict[str, Any]]:
+        """Return list of all scenarios with titles only."""
+        if self.scenarios is None:
+            return []
+
+        return [
+            {
+                "id": i,
+                "title": scenario["scenario"]
+            }
+            for i, scenario in enumerate(self.scenarios)
+        ]
+
+    def get_analysis_only(self, scenario_id: int) -> Optional[Dict[str, Any]]:
+        """Get analysis object only (no wrapper) for scenario."""
+        if self.scenarios is None:
+            return None
+
+        if scenario_id < 0 or scenario_id >= len(self.scenarios):
+            return None
+
+        return self.scenarios[scenario_id]["analysis"]
