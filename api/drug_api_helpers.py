@@ -28,3 +28,24 @@ class DrugDataService:
         self.kb_df = None
         self.lookups = None
         self.data_path = Path("data")
+
+    def load_data(self) -> bool:
+        """Load precomputed analysis results and KB for live lookup."""
+        try:
+            logger.info("Loading drug interaction analysis data...")
+
+            # Load precomputed scenarios
+            with open(self.data_path / 'precomputed_samples.json', 'r') as f:
+                self.scenarios = json.load(f)
+            logger.info(f"Loaded {len(self.scenarios)} scenarios successfully")
+
+            # Load KB and lookups for live interaction checking
+            logger.info("Loading knowledge base for live lookups...")
+            self.kb_df, self.lookups = load_data()
+            logger.info("Knowledge base loaded successfully")
+
+            return True
+
+        except Exception as e:
+            logger.error(f"Failed to load data: {str(e)}")
+            return False
