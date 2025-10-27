@@ -72,3 +72,53 @@ class DrugDataService:
             return None
 
         return self.scenarios[scenario_id]["analysis"]
+
+    def check_interaction_live(self, drug_query: str) -> Dict[str, Any]:
+        """
+        Perform live drug interaction lookup using direct KB matching.
+        Uses check_polypharmacy_light for fast Tier 1/3 results (no LLM/embedding costs).
+        """
+        if self.kb_df is None or self.lookups is None:
+            raise RuntimeError("Knowledge base not loaded")
+
+        # Preprocess query: strip 'interaction' keyword and normalize separators
+        text = drug_query.replace("interaction", "").replace("and", ",")
+        drugs = [d.strip() for d in text.split(",") if d.strip()]
+
+        # Perform direct KB lookup
+        result = check_polypharmacy_light_orig(drugs, self.kb_df, self.lookups)
+        return result
+
+    def validate_data(self) -> Dict[str, bool]:
+        """Validate that data is loaded."""
+        return {
+            'scenarios_loaded': self.scenarios is not None,
+            'kb_loaded': self.kb_df is not None,
+            'lookups_loaded': self.lookups is not None
+        }
+
+    def get_data_summary(self) -> Dict[str, Any]:
+        """Get summary of loaded data."""
+        if self.scenarios is None:
+            return {'error': 'Data not loaded'}
+
+        return {
+            'total_scenarios': len(self.scenarios),
+            'scenarios_available': len(self.scenarios),
+            'kb_interactions': len(self.kb_df) if self.kb_df is not None else 0,
+            'live_lookup_enabled': self.kb_df is not None and self.lookups is not None
+        }
+
+
+# Global instance
+data_service = DrugDataService()
+
+
+def initialize_data_service() -> bool:
+    """Initialize the global data service instance."""
+    return data_service.load_data()
+
+
+def get_data_service() -> DrugDataService:
+    """Get the global data service instance."""
+    return data_service
