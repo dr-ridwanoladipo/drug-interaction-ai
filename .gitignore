@@ -4,3 +4,5 @@ venv
 /data/
 utility/
 notebooks/.ipynb_checkpoints
+/drug_api.log
+/test_drug_api.py
