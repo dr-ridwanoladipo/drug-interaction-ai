@@ -268,12 +268,8 @@ async def check_interaction_live(request: Request, body: LiveInteractionRequest)
 
         result = data_service.check_interaction_live(drug_query)
 
-        # Check for parsing errors
         if 'error' in result:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=result['error']
-            )
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result['error'])
 
         return result
 
@@ -287,18 +283,34 @@ async def check_interaction_live(request: Request, body: LiveInteractionRequest)
         logger.error(f"Validation error: {error_msg}")
 
         if "DataFrame is ambiguous" in error_msg:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Internal data structure error"
-            )
+            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal data structure error")
 
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=error_msg
-        )
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=error_msg)
     except Exception as e:
         logger.error(f"Error checking live interaction: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to check interaction: {str(e)}"
-        )
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to check interaction: {str(e)}")
+
+
+# ============================================================================
+# Global Exception Handlers
+# ============================================================================
+
+@app.exception_handler(ValueError)
+async def value_error_handler(request, exc):
+    """Handle validation errors."""
+    logger.error(f"Validation error: {exc}")
+    return JSONResponse(
+        status_code=422,
+        content={"detail": f"Validation error: {exc}", "time": current_time_iso()}
+    )
+
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request, exc):
+    """Catch-all exception handler for unexpected errors."""
+    logger.error(f"Unhandled error: {exc}")
+    logger.error(traceback.format_exc())
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Unexpected error occurred", "time": current_time_iso()}
+    )
