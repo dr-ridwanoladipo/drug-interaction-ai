@@ -268,8 +268,12 @@ async def check_interaction_live(request: Request, body: LiveInteractionRequest)
 
         result = data_service.check_interaction_live(drug_query)
 
+        # Check for parsing errors
         if 'error' in result:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result['error'])
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=result['error']
+            )
 
         return result
 
@@ -282,13 +286,23 @@ async def check_interaction_live(request: Request, body: LiveInteractionRequest)
         error_msg = str(e)
         logger.error(f"Validation error: {error_msg}")
 
+        # Distinguish between expected validation errors and unexpected data errors
         if "DataFrame is ambiguous" in error_msg:
-            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal data structure error")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Internal data structure error"
+            )
 
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=error_msg)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=error_msg
+        )
     except Exception as e:
         logger.error(f"Error checking live interaction: {e}", exc_info=True)
-        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to check interaction: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to check interaction: {str(e)}"
+        )
 
 
 # ============================================================================
@@ -314,3 +328,11 @@ async def general_exception_handler(request, exc):
         status_code=500,
         content={"detail": "Unexpected error occurred", "time": current_time_iso()}
     )
+
+
+# ============================================================================
+# Entry Point
+# ============================================================================
+
+if __name__ == "__main__":
+    uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True, log_level="info")
