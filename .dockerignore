@@ -1,0 +1,25 @@
+# ── Version control ───────────────────────────────
+.git
+.gitignore
+
+# ── Documentation ─────────────────────────────────
+README.md
+LICENSE
+
+# ── CI/CD configuration ───────────────────────────
+.github/
+task-definition.json
+
+# ── Development artifacts ─────────────────────────
+notebooks/
+experiments/
+utility/
+
+# ── Backend / Training / Non-UI code ──────────────
+api/
+data/*
+!data/precomputed_samples.json
+scripts/
+src/
+.env
+requirements.txt
