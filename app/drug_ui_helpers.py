@@ -175,6 +175,7 @@ def load_custom_css():
         border-radius: 15px;
         text-align: center;
         margin-top: 2rem;
+        margin-bottom: 5rem;
     }
 
     /* Animations */
@@ -253,7 +254,7 @@ def display_scenario_grid(scenarios):
                 border: 1px solid #a5b4fc; color: #1e3a8a;
                 padding: 0.6rem 1rem; margin-bottom: 1rem;
                 border-radius: 0.6rem; font-size: 0.9rem;">
-    ⚡ <em>Demo subset — production version supports real-time polypharmacy analysis for any drug combination.</em>
+    💡 <em>Demo subset — production version supports real-time polypharmacy analysis for any drug combination.</em>
     </div>
     """, unsafe_allow_html=True)
 
