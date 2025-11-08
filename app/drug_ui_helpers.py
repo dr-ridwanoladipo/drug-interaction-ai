@@ -248,9 +248,15 @@ def display_hero_section():
 def display_scenario_grid(scenarios):
     """Display clinical scenario selection grid"""
     st.markdown("### 🔍 Select a Clinical Scenario")
-    st.markdown(
-        "<p style='margin-top:-0.4rem; font-size:0.9rem; color:#4b5563;'>💬 <em>Demo subset — production version supports real-time polypharmacy analysis for any drug combination.</em></p>",
-        unsafe_allow_html=True)
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+                border: 1px solid #a5b4fc; color: #1e3a8a;
+                padding: 0.6rem 1rem; margin-bottom: 1rem;
+                border-radius: 0.6rem; font-size: 0.9rem;">
+    ⚡ <em>Demo subset — production version supports real-time polypharmacy analysis for any drug combination.</em>
+    </div>
+    """, unsafe_allow_html=True)
+
     st.markdown("<p style='margin-top:0.4rem;'>Click any scenario below to analyze drug interactions</p>",
                 unsafe_allow_html=True)
     st.markdown("---")
