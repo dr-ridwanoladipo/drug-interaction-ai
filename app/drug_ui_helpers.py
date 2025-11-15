@@ -436,10 +436,10 @@ def display_footer():
     Powered by DrugBank · RxNorm · OpenAI GPT-5 · AWS Bedrock
   </p>
   <div style="margin-top:0.3rem;">
-    <a href="https://github.com/dr-ridwanoladipo/drug-interaction-ai" target="_blank"
+    <a href="https://github.com/dr-ridwanoladipo/drug-interaction-ai#readme" target="_blank"
        style="color:#a5b4fc; text-decoration:none; margin-right:1.2rem; font-weight:500;">💻 GitHub</a>
-    <a href="https://huggingface.co/spaces/dr-ridwanoladipo/drug-interaction-ai" target="_blank"
-       style="color:#a5b4fc; text-decoration:none; font-weight:500;">⚡ API Documentation</a>
+    <a href="https://huggingface.co/spaces/dr-ridwanoladipo/drug-interaction-api" target="_blank"
+       style="color:#a5b4fc; text-decoration:none; font-weight:500;">🔗 Live API Demo</a>
   </div>
   <p style="margin-top:1rem; font-size:0.95rem; color:rgba(255,255,255,0.85);">
     © 2025 Ridwan Oladipo, MD — Medical AI Specialist
