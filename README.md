@@ -147,6 +147,8 @@ https://dr-ridwanoladipo-drug-interaction-api.hf.space/docs
 - **Infrastructure:** Docker · AWS ECS Fargate · ECR · GitHub Actions · CloudWatch logging  
 - **CI/CD:** Automated deployment with health checks, rollback, and zero-downtime (~5 min git push → production)
 
+**Automated Deployment Workflow** ([View CICD pipeline](https://github.com/dr-ridwanoladipo/drug-interaction-ai/blob/master/.github/workflows/aws-ecs-deploy.yml))
+
 ---
 
 ## 🧪 Clinical Validation & Standards
