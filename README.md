@@ -84,6 +84,15 @@ graph LR
 
 ---
 
+## 📖 Development Pipeline
+
+- **[Ingestion Pipeline](https://github.com/dr-ridwanoladipo/drug-interaction-ai/blob/master/notebooks/ingestion.ipynb)**
+- **[RAG Pipeline](https://github.com/dr-ridwanoladipo/drug-interaction-ai/blob/master/notebooks/rag_pipeline.ipynb)**
+- **[Safety Pipeline](https://github.com/dr-ridwanoladipo/drug-interaction-ai/blob/master/notebooks/safety.ipynb)**
+- **[AWS Bedrock Embedding Benchmark](https://github.com/dr-ridwanoladipo/drug-interaction-ai/blob/master/experiments/bedrock_embeddings.ipynb)**
+
+---
+
 ## 🎬 Interactive Features
 
 ### **Clinical Interface**
