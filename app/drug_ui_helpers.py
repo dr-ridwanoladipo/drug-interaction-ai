@@ -239,7 +239,7 @@ def display_hero_section():
     """Display hero header"""
     st.markdown("""
     <div class="hero-header">
-        <h1>💊 Drug Interaction Checker</h1>
+        <h1>💊 Drug Interaction AI</h1>
         <p>AI-Powered Clinical Decision Support</p>
         <p><strong>by Ridwan Oladipo, MD | Clinical AI Architect</strong></p>
     </div>
