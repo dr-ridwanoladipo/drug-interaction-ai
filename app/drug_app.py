@@ -2,7 +2,7 @@
 💊 Drug Interaction Checker - Main Application
 AI-Powered Clinical Decision Support System
 
-Author: Ridwan Oladipo, MD | Medical AI Specialist
+Author: Ridwan Oladipo, MD | Clinical AI Architect
 """
 
 import streamlit as st

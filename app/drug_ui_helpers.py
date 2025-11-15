@@ -2,7 +2,7 @@
 💊 Drug Interaction Checker - UI Helper Functions
 Complete UI system with chat interface, streaming, and clinical display
 
-Author: Ridwan Oladipo, MD | Medical AI Specialist
+Author: Ridwan Oladipo, MD | Clinical AI Architect
 """
 
 import streamlit as st
@@ -241,7 +241,7 @@ def display_hero_section():
     <div class="hero-header">
         <h1>💊 Drug Interaction Checker</h1>
         <p>AI-Powered Clinical Decision Support</p>
-        <p><strong>by Ridwan Oladipo, MD | Medical AI Specialist</strong></p>
+        <p><strong>by Ridwan Oladipo, MD | Clinical AI Architect</strong></p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -442,7 +442,7 @@ def display_footer():
        style="color:#a5b4fc; text-decoration:none; font-weight:500;">🔗 Live API Demo</a>
   </div>
   <p style="margin-top:1rem; font-size:0.95rem; color:rgba(255,255,255,0.85);">
-    © 2025 Ridwan Oladipo, MD — Medical AI Specialist
+    © 2025 Ridwan Oladipo, MD — Clinical AI Architect
   </p>
   <p style="margin-top:0.5rem; font-size:0.8rem; opacity:0.8;">
     ⚠️ Built to FDA-grade standards for clinical deployment.  
